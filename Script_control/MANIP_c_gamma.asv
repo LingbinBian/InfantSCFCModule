@@ -1,0 +1,393 @@
+% MANIP averaging structural-functional consistency
+
+%
+% Version 1.0
+% 1-Jun-2024
+% Copyright (c) 2024, Lingbin Bian
+clear
+clc
+close all
+
+type=1; % 1 DTI strength, 2 DTI count
+N_roi=100;
+N_window=9;
+scan_dir='AP';
+N_res=40;
+c_group_LH=cell(N_res,1);
+c_group_RH=cell(N_res,1);
+
+% -------------------------------------------------------------------------
+% LH or RH
+% H: 1 LR, 2 RH
+
+resolution=1.01:0.01:1.4;
+for n=1:N_res 
+    load(['../','results_SC_strength_FC','/','roi_',num2str(N_roi),'_1_',scan_dir,'/','LH/',num2str(resolution(n)),'/SC_FC_results'])
+    c_group_LH{n}=c_SC_FC;
+end
+
+for n=1:N_res
+    load(['../','results_SC_strength_FC','/','roi_',num2str(N_roi),'_1_',scan_dir,'/','RH/',num2str(resolution(n)),'/SC_FC_results'])
+    c_group_RH{n}=c_SC_FC;
+end
+
+% Plot the LH
+c_LH_Vis_res=zeros(N_res,N_window);
+c_LH_SomMot_res=zeros(N_res,N_window);
+c_LH_DorsAttn_res=zeros(N_res,N_window);
+c_LH_SalVentAttn_res=zeros(N_res,N_window);
+c_LH_Limbic_res=zeros(N_res,N_window);
+c_LH_Cont_res=zeros(N_res,N_window);
+c_LH_Default_res=zeros(N_res,N_window);
+
+if N_roi==100
+    for i=1:N_res
+         c_LH_Vis_res(i,:)=mean(c_group_LH{i}(1:9,:));
+         c_LH_SomMot_res(i,:)=mean(c_group_LH{i}(10:15,:));
+         c_LH_DorsAttn_res(i,:)=mean(c_group_LH{i}(16:23,:));
+         c_LH_SalVentAttn_res(i,:)=mean(c_group_LH{i}(24:30,:));
+         c_LH_Limbic_res(i,:)=mean(c_group_LH{i}(31:33,:));
+         c_LH_Cont_res(i,:)=mean(c_group_LH{i}(34:37,:));
+         c_LH_Default_res(i,:)=mean(c_group_LH{i}(40:50,:));
+    end
+
+elseif N_roi==200
+    for i=1:N_res
+        c_LH_Vis_res(i,:)=mean(c_group_LH{i}(1:14,:));
+        c_LH_SomMot_res(i,:)=mean(c_group_LH{i}(15:30,:));
+        c_LH_DorsAttn_res(i,:)=mean(c_group_LH{i}(31:43,:));
+        c_LH_SalVentAttn_res(i,:)=mean(c_group_LH{i}(44:54,:));
+        c_LH_Limbic_res(i,:)=mean(c_group_LH{i}(55:60,:));
+        c_LH_Cont_res(i,:)=mean(c_group_LH{i}(61:73,:));
+        c_LH_Default_res(i,:)=mean(c_group_LH{i}(74:100,:));
+    end
+elseif N_roi==300
+    for i=1:N_res
+        c_LH_Vis_res(i,:)=mean(c_group_LH{i}(1:24,:));
+        c_LH_SomMot_res(i,:)=mean(c_group_LH{i}(25:53,:));
+        c_LH_DorsAttn_res(i,:)=mean(c_group_LH{i}(54:69,:));
+        c_LH_SalVentAttn_res(i,:)=mean(c_group_LH{i}(70:85,:));
+        c_LH_Limbic_res(i,:)=mean(c_group_LH{i}(86:95,:));
+        c_LH_Cont_res(i,:)=mean(c_group_LH{i}(96:112,:));
+        c_LH_Default_res(i,:)=mean(c_group_LH{i}(113:150,:));
+    end
+elseif N_roi==400
+    for i=1:N_res
+        c_LH_Vis_res(i,:)=mean(c_group_LH{i}(1:31,:));
+        c_LH_SomMot_res(i,:)=mean(c_group_LH{i}(32:68,:));
+        c_LH_DorsAttn_res(i,:)=mean(c_group_LH{i}(69:91,:));
+        c_LH_SalVentAttn_res(i,:)=mean(c_group_LH{i}(92:113,:));
+        c_LH_Limbic_res(i,:)=mean(c_group_LH{i}(114:126,:));
+        c_LH_Cont_res(i,:)=mean(c_group_LH{i}(127:148,:));
+        c_LH_Default_res(i,:)=mean(c_group_LH{i}(149:200,:));
+    end
+end
+
+% -------------------------------------------------------------------------
+figure;
+hold on
+
+for i = 1:N_res
+    % Calculate gradient ratio
+    t = (i - 1) / (N_res - 1);  % t ∈ [0,1]
+    
+    % Define light red and dark red
+    lightRed = [1, 0.7, 0.7];  % light red
+    darkRed  = [0.5, 0, 0];    % dark red
+    
+    % Interpolate color
+    col = (1 - t) * lightRed + t * darkRed;
+    
+    plot(1:9, c_LH_Vis_res(i,:), '-o', ...
+        'Color', col, ...
+        'LineWidth', 1.2, ...
+        'MarkerSize', 7, ...
+        'MarkerEdgeColor', col, ...
+        'MarkerFaceColor', col);
+end
+Net_name='LH Vis';
+fig_prop(N_roi,Net_name,scan_dir);
+hold off
+
+
+
+% -------------------------------------------------------------------------
+figure;
+hold on
+
+for i = 1:N_res
+    % Calculate gradient ratio
+    t = (i - 1) / (N_res - 1);  % t ∈ [0,1]
+    
+    % Define light green and dark green
+    lightGreen = [0.7, 1, 0.7];  % light green
+    darkGreen  = [0, 0.4, 0];    % dark green
+    
+    % Interpolate color
+    col = (1 - t) * lightGreen + t * darkGreen;
+    
+    plot(1:9, c_LH_SomMot_res(i,:), '-o', ...
+        'Color', col, ...
+        'LineWidth', 1.2, ...
+        'MarkerSize', 7, ...
+        'MarkerEdgeColor', col, ...
+        'MarkerFaceColor', col);
+end
+Net_name='LH SomMot';
+fig_prop(N_roi,Net_name,scan_dir);
+hold off
+
+% -------------------------------------------------------------------------
+figure;
+hold on
+
+for i = 1:N_res
+    % Calculate gradient ratio
+    t = (i - 1) / (N_res - 1);  % t ∈ [0,1]
+    
+    % Define light blue
+    lightBlue = [0.6, 0.8, 1];  % light blue
+    darkBlue  = [0, 0, 0.5];    % dark blue
+    
+    % Interpolate color
+    col = (1 - t) * lightBlue + t * darkBlue;
+    
+    plot(1:9, c_LH_DorsAttn_res(i,:), '-o', ...
+        'Color', col, ...
+        'LineWidth', 1.2, ...
+        'MarkerSize', 7, ...
+        'MarkerEdgeColor', col, ...
+        'MarkerFaceColor', col);
+end
+Net_name='LH DorsAttn';
+fig_prop(N_roi,Net_name,scan_dir);
+hold off
+
+% -------------------------------------------------------------------------
+figure;
+hold on
+
+for i = 1:N_res
+    % Calculate gradient ratio
+    t = (i - 1) / (N_res - 1);  % t ∈ [0,1]
+    
+    % Define light cyan and dark cyan
+    lightCyan = [0.7, 1, 1];   % light cyan
+    darkCyan  = [0, 0.5, 0.5]; % dark cyan
+    
+    % Interpolate color
+    col = (1 - t) * lightCyan + t * darkCyan;
+    
+    plot(1:9, c_LH_SalVentAttn_res(i,:), '-o', ...
+        'Color', col, ...
+        'LineWidth', 1.2, ...
+        'MarkerSize', 7, ...
+        'MarkerEdgeColor', col, ...
+        'MarkerFaceColor', col);
+end
+Net_name='LH SalVentAttn';
+fig_prop(N_roi,Net_name,scan_dir);
+hold off
+
+% -------------------------------------------------------------------------
+figure;
+hold on
+
+for i = 1:N_res
+    % Calculate gradient ratio
+    t = (i - 1) / (N_res - 1);  % t ∈ [0,1]
+    
+    % Define light pink and dark magenta
+    lightMagenta = [1, 0.7, 1];   % light pink
+    darkMagenta  = [0.5, 0, 0.5]; % dark magenta
+    
+    % Interpolate color
+    col = (1 - t) * lightMagenta + t * darkMagenta;
+    
+    plot(1:9, c_LH_Limbic_res(i,:), '-o', ...
+        'Color', col, ...
+        'LineWidth', 1.2, ...
+        'MarkerSize', 7, ...
+        'MarkerEdgeColor', col, ...
+        'MarkerFaceColor', col);
+end
+Net_name='LH Limbic';
+fig_prop(N_roi,Net_name,scan_dir);
+hold off
+
+
+% -------------------------------------------------------------------------
+figure;
+hold on
+
+for i = 1:N_res
+    % Calculate gradient ratio
+    t = (i - 1) / (N_res - 1);   % t ∈ [0,1]
+    
+    % Define light yellow and dark yellow
+    lightYellow = [1, 1, 0.6];
+    darkYellow  = [0.8, 0.6, 0];
+    col = (1 - t) * lightYellow + t * darkYellow;  
+    
+    plot(1:9, c_LH_Cont_res(i,:), '-o', ...
+        'Color', col, ...
+        'LineWidth', 1.2, ...
+        'MarkerSize', 7, ...
+        'MarkerEdgeColor', col, ...
+        'MarkerFaceColor', col);
+end
+Net_name='LH Cont';
+fig_prop(N_roi,Net_name,scan_dir);
+
+hold off
+% -------------------------------------------------------------------------
+
+figure;
+hold on
+
+for i = 1:N_res
+    % 
+    t = (i - 1) / (N_res - 1);     % t ∈ [0,1]
+    grayLevel = 0.8 - t * 0.8;     % from 0.8 grey → 0 dark
+    col = [grayLevel grayLevel grayLevel];
+
+    plot(1:9, c_LH_Default_res(i,:), '-o', ...
+        'Color', col, ...
+        'LineWidth', 1.2, ...
+        'MarkerSize', 7, ...
+        'MarkerEdgeColor', col, ...
+        'MarkerFaceColor', col);
+end
+Net_name='LH Default';
+fig_prop(N_roi,Net_name,scan_dir);
+
+hold off
+% -------------------------------------------------------------------------
+
+% legend('LH Vis', ...
+%     'LH SomMot',...
+%     'LH DorsAttn',...
+%     'LH SalVentAttn',...
+%     'LH Limbic',...
+%     'LH Cont',...
+%     'LH Default','fontsize', 12,'location','southwest')
+
+%saveas(gcf,['../','results_SC_strength_FC','/','roi_',num2str(N_roi),'_1_',scan_dir,'/LH','/C_mean_SC_FC_7_network_LH',scan_dir,'.fig'])
+
+%saveas(gcf,['../','results_SC_strength_FC','/','roi_',num2str(N_roi),'_1_',scan_dir,'/RH','/C_mean_SC_FC_7_network_',scan_dir,'.fig'])
+
+ twosampletest(c_LH_Vis_res(:,8), c_LH_Vis_res(:,9),N_roi,'Vis (LH)',scan_dir)
+ twosampletest(c_LH_SomMot_res(:,8),c_LH_SomMot_res(:,9),N_roi,'SomMot (LH)',scan_dir)
+ twosampletest(c_LH_DorsAttn_res(:,8),c_LH_DorsAttn_res(:,9),N_roi,'DorsAttn (LH)',scan_dir)
+ twosampletest(c_LH_SalVentAttn_res(:,8),c_LH_SalVentAttn_res(:,9),N_roi,'SalVentAttn (LH)',scan_dir)
+ twosampletest(c_LH_Limbic_res(:,8),c_LH_Limbic_res(:,9),N_roi,'Limbic (LH)',scan_dir)
+ twosampletest(c_LH_Cont_res(:,8),c_LH_Cont_res(:,9),N_roi,'Cont (LH)',scan_dir)
+ twosampletest(c_LH_Default_res(:,8),c_LH_Default_res(:,9),N_roi,'Default (LH)',scan_dir)
+
+
+% nested function ---------------------------------------------------------
+
+
+function []=fig_prop(N_roi,Net_name,scan_dir)
+    title({[Net_name,' ROI ',num2str(N_roi),' ',scan_dir]},'fontsize',16)
+    set(gca,'box','on')
+    set(gca,'fontsize',16)
+    set(gca,'xticklabel',{'0-5', '3-8', '6-11','9-14','12-17','15-23','18-29','24-36','>36'},'FontSize',12);
+    
+    xlabel('Month','fontsize',16)
+    ylabel('c','fontsize',16)
+    
+    set(gcf,'unit','centimeters','position',[6 10 16 11])
+    set(gca,'Position',[.15 .15 .75 .7]);
+    
+    set(gca, 'linewidth', 1.2, 'fontsize', 16, 'fontname', 'times')
+    
+    xlim([1,9]);
+    ylim([0,1])
+    % destination file
+    pic_path='/Users/lingbinbian/Documents/BCP_fMRI_sMRI/figure';
+   
+    saveas(gcf,[pic_path,'/',Net_name,'_ROI_',num2str(N_roi),' ',scan_dir,'.svg'])
+
+end
+
+
+
+function twosampletest(data1, data2,N_roi,Net_name,scan_dir)
+
+    figure
+    % edge color
+    edgecolor1 = [0, 0, 0]; % black color
+    edgecolor2 = [0, 0, 0]; % black color
+    
+    % fill color
+    fillcolor1 = [1, 0.5, 0.5]; % 0-back color
+    fillcolor2 = [0.53, 0.81, 0.92]; % 2-back color
+    fillcolors = [fillcolor1; fillcolor2];
+    
+    % location
+    position_1 = 1;  % data1
+    position_2 = 2;  % data2
+    box_1 = boxplot(data1, 'positions', position_1, 'colors', edgecolor1, 'width', 0.5, 'symbol', 'r+', 'outliersize', 5);
+    hold on;
+    box_2 = boxplot(data2, 'positions', position_2, 'colors', edgecolor2, 'width', 0.5, 'symbol', 'r+', 'outliersize', 5);
+    
+    % color
+    boxobj = findobj(gca, 'Tag', 'Box');
+    for j = 1:length(boxobj)
+        patch(get(boxobj(j), 'XData'), get(boxobj(j), 'YData'), fillcolors(j, :), 'FaceAlpha', 0.5, 'LineWidth', 1);
+    end
+    
+    % 
+     ylim([0, 1.2]); % y 
+     xlim([0.5, 2.5])
+    set(gca, 'XTick', 1:2, 'XTickLabel', {'awake', 'sleep'}, 'FontSize', 12);
+    set(gca, 'LineWidth', 1.2, 'FontSize', 16, 'FontName', 'Times')   
+    xlabel('Condition', 'FontSize', 16)
+    ylabel('c', 'FontSize', 16)
+    title([num2str(N_roi),' ', Net_name, ' ', scan_dir])
+    
+    set(gcf, 'Units', 'centimeters', 'Position', [6 10 8 12])
+    set(gca, 'Position', [.22 .28 .7 .6]);
+    
+    % Wilcoxon signed-rank test
+    [p, h] = signrank(data1, data2);
+    
+    % statistical significance
+    sigline([1, 2], max(max([data1, data2])), p, p); 
+    
+    hold off;
+    
+    % 
+    function sigline(x, y, p, p_v)
+        hold on
+        if p < 0.001
+            plot(mean(x), y * 1.15, '*k')
+            plot(mean(x) - 0.16, y * 1.15, '*k')
+            plot(mean(x) + 0.16, y * 1.15, '*k')
+        elseif (0.001 <= p) && (p < 0.01)
+            plot(mean(x) - 0.08, y * 1.15, '*k')
+            plot(mean(x) + 0.08, y * 1.15, '*k')
+        elseif (0.01 <= p) && (p < 0.05)
+            plot(mean(x), y * 1.15, '*k')
+        end
+    
+        if p < 0.001
+            plot(mean(x), y * 1.2, 'pentagram', 'color', [0 0 0])
+            plot(mean(x) - 0.16, y * 1.2, 'pentagram', 'color', [0 0 0])
+            plot(mean(x) + 0.16, y * 1.2, 'pentagram', 'color', [0 0 0])
+        elseif (0.001 <= p) && (p < 0.01)
+            plot(mean(x) - 0.08, y * 1.2, 'pentagram', 'color', [0 0 0])
+            plot(mean(x) + 0.08, y * 1.2, 'pentagram', 'color', [0 0 0]);
+        elseif (0.01 <= p) && (p < 0.05)
+            plot(mean(x), y * 1.2, 'pentagram', 'color', [0 0 0])
+        end
+    
+        plot(x, [1; 1] * y * 1.1, '-k', 'LineWidth', 1); % significance horizontal line
+        plot([1; 1] * x(1), [y * 1.05, y * 1.1], '-k', 'LineWidth', 1); % significance vertical line
+        plot([1; 1] * x(2), [y * 1.05, y * 1.1], '-k', 'LineWidth', 1); % significance vertical line
+    
+        hold off
+    end
+
+end
